@@ -1,0 +1,27 @@
+Authentication (/users/urls.py) 
+POST /auth/login/ - Authenticate and return JWT token.
+POST /auth/register/ - Create a new student account.
+GET /auth/verify-email/ - Activate account using token.
+POST /auth/refresh/ - Get new access token.
+Assignments & Submissions (/academics/urls.py) 
+GET /assignments/ - List assignments (filtered by role).
+POST /assignments/ - Create new assignment (Teacher only).
+GET /assignments/{id}/ - Get specific assignment details.
+PUT /assignments/{id}/ - Update assignment (Teacher owner only).
+DELETE /assignments/{id}/ - Delete assignment (Teacher owner only).
+GET /assignments/{id}/submissions/ - List submissions for a specific assignment.
+POST /submissions/ - Create a student submission.
+PUT /submissions/{id}/grade/ - Upsert a grade for a submission (Teacher only).
+Internships (/internships/urls.py) 
+GET /internships/my/ - Get the current student's active internship.
+POST /internships/ - Create an internship record (Admin only).
+POST /internship-logs/ - Submit a weekly log (Student only).
+GET /internship-logs/?internshipId= - List logs for an internship.
+PUT /internship-logs/{id}/review/ - Add teacher feedback to a log.
+Admin & Reports (/users/urls.py & /academics/urls.py)
+ GET /admin/users/ - List all users with filters.
+POST /admin/users/ - Create a Teacher or Admin account.
+PUT /admin/users/{id}/ - Update user status/roles.
+DELETE /admin/users/{id}/ - Soft delete a user.
+GET /reports/assignments/ - Get assignment summary analytics.
+GET /audit-logs/ - View system activity logs.
