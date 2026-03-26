@@ -1,0 +1,28 @@
+saims_backend/
+│
+├── saims_core/                 # Main Django Project Configuration
+│   ├── __init__.py
+│   ├── settings.py             # Supabase DB connection goes here
+│   ├── urls.py                 # Master URL routing
+│   └── wsgi.py / asgi.py
+│
+├── users/                      # App 1: Auth & User Management
+│   ├── models.py               # Custom User, Departments
+│   ├── serializers.py
+│   ├── views.py                # Login, Register, Role checks
+│   └── urls.py
+│
+├── academics/                  # App 2: Courses, Assignments, Submissions
+│   ├── models.py               # Courses, Assignments, Submissions
+│   ├── serializers.py
+│   ├── views.py                # CRUD logic for assignments/submissions
+│   └── urls.py
+│
+├── internships/                # App 3: Internships & Logs
+│   ├── models.py               # Internships, InternshipLogs
+│   ├── serializers.py
+│   ├── views.py
+│   └── urls.py
+│
+├── requirements.txt            # django, djangorestframework, psycopg2-binary
+└── manage.py                   # Django execution script
