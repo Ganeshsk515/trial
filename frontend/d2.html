@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SAIMS — Smart Assignment & Internship Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Warm white professional palette */
+  --bg:        #faf9f7;
+  --bg2:       #f5f3ef;
+  --bg3:       #edeae4;
+  --surface:   #ffffff;
+  --surface2:  #f9f8f6;
+  --border:    #e8e4dc;
+  --border2:   #d5cfc4;
+
+  /* Typography */
+  --text:      #1a1714;
+  --text2:     #6b6459;
+  --text3:     #a8a098;
+
+  /* Brand — deep indigo + warm amber accent */
+  --accent:    #2d3a8c;
+  --accent-lt: #eef0fa;
+  --accent2:   #1e2866;
+  --amber:     #c47a1e;
+  --amber-lt:  #fdf3e3;
+  --teal:      #1a7a6e;
+  --teal-lt:   #e8f6f4;
+  --rose:      #b5363a;
+  --rose-lt:   #fceaea;
+  --sage:      #3a6b4a;
+  --sage-lt:   #eaf3ec;
+
+  --sidebar-w: 252px;
+  --sidebar-c:  68px;
+  --nav-h:      60px;
+  --r:          10px;
+  --r-sm:        6px;
+  --shadow-sm:  0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:     0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
+  --shadow-lg:  0 12px 40px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.06);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { scroll-behavior:smooth }
+body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); min-height:100vh }
+h1,h2,h3,h4 { font-family:'Playfair Display',serif }
+#app { min-height:100vh }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:5px; height:5px }
+::-webkit-scrollbar-track { background:transparent }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:10px }
+
+/* Animations */
+@keyframes fadeUp    { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn    { from{opacity:0} to{opacity:1} }
+@keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes spin      { to{transform:rotate(360deg)} }
+@keyframes shimmer   { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+@keyframes toastIn   { from{opacity:0;transform:translateX(80px)} to{opacity:1;transform:translateX(0)} }
+@keyframes pulse2    { 0%,100%{opacity:1} 50%{opacity:.5} }
+@keyframes fill      { from{width:0} to{width:var(--w)} }
+
+/* ── TYPOGRAPHY ─────────────────────────────────── */
+.display { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; line-height:1.2 }
+.headline { font-size:22px; font-weight:600 }
+.title   { font-size:16px; font-weight:600 }
+.label   { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:var(--text3) }
+.caption { font-size:12px; color:var(--text2) }
+
+/* ── BUTTONS ─────────────────────────────────────── */
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:9px 18px; border-radius:var(--r-sm); font-family:'Outfit',sans-serif; font-weight:600; font-size:13px; cursor:pointer; transition:all .18s; border:none; text-decoration:none; white-space:nowrap; letter-spacing:.01em }
+.btn-primary { background:var(--accent); color:#fff; box-shadow:0 2px 6px rgba(45,58,140,.25) }
+.btn-primary:hover { background:var(--accent2); box-shadow:0 4px 12px rgba(45,58,140,.32); transform:translateY(-1px) }
+.btn-primary:active { transform:translateY(0) }
+.btn-amber  { background:var(--amber); color:#fff; box-shadow:0 2px 6px rgba(196,122,30,.25) }
+.btn-amber:hover { background:#b06c15; transform:translateY(-1px) }
+.btn-outline { background:var(--surface); color:var(--text); border:1.5px solid var(--border2) }
+.btn-outline:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-lt) }
+.btn-ghost  { background:transparent; color:var(--text2); border:none }
+.btn-ghost:hover { color:var(--accent); background:var(--accent-lt) }
+.btn-danger { background:var(--rose-lt); color:var(--rose); border:1.5px solid rgba(181,54,58,.2) }
+.btn-danger:hover { background:rgba(181,54,58,.12) }
+.btn-sm  { padding:6px 13px; font-size:12px }
+.btn-lg  { padding:12px 26px; font-size:15px; border-radius:8px }
+.btn-full { width:100% }
+.btn-icon { padding:8px; border-radius:var(--r-sm) }
+
+/* ── INPUT ───────────────────────────────────────── */
+.input { width:100%; background:var(--surface); border:1.5px solid var(--border); border-radius:var(--r-sm); padding:10px 13px; color:var(--text); font-family:'Outfit',sans-serif; font-size:14px; outline:none; transition:all .18s }
+.input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(45,58,140,.08) }
+.input::placeholder { color:var(--text3) }
+textarea.input { resize:vertical; min-height:100px }
+select.input option { background:var(--surface) }
+.input-wrap { margin-bottom:18px }
+.input-label { display:block; font-size:12px; font-weight:600; color:var(--text2); margin-bottom:6px }
+
+/* ── CARD ────────────────────────────────────────── */
+.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:22px; box-shadow:var(--shadow-sm) }
+.card:hover { box-shadow:var(--shadow) }
+.card-flat { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:18px }
+
+/* ── BADGE ───────────────────────────────────────── */
+.badge { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; letter-spacing:.03em }
+.b-indigo { background:var(--accent-lt); color:var(--accent) }
+.b-amber  { background:var(--amber-lt);  color:var(--amber) }
+.b-teal   { background:var(--teal-lt);   color:var(--teal) }
+.b-rose   { background:var(--rose-lt);   color:var(--rose) }
+.b-sage   { background:var(--sage-lt);   color:var(--sage) }
+.b-gray   { background:var(--bg3); color:var(--text2) }
+.b-dot::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; display:inline-block }
+
+/* ── DIVIDER ─────────────────────────────────────── */
+.divider { height:1px; background:var(--border); margin:20px 0 }
+.divider-v { width:1px; background:var(--border); align-self:stretch }
+
+/* ── AUTH ────────────────────────────────────────── */
+.auth-wrap { min-height:100vh; display:flex; background:var(--bg) }
+.auth-left  { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; position:relative }
+.auth-right { width:520px; background:var(--surface); border-left:1px solid var(--border); display:flex; align-items:center; justify-content:center; padding:48px; flex-direction:column }
+.auth-brand { display:flex; align-items:center; gap:10px; margin-bottom:48px }
+.auth-brand-mark { width:38px; height:38px; border-radius:10px; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff; box-shadow:0 4px 12px rgba(45,58,140,.3) }
+.auth-brand-name { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text) }
+.auth-card { width:100%; max-width:400px }
+.auth-headline { font-size:28px; font-weight:700; margin-bottom:6px; font-family:'Playfair Display',serif }
+.auth-sub { font-size:14px; color:var(--text2); margin-bottom:32px }
+.auth-hero { text-align:center }
+.auth-hero-graphic { width:340px; height:320px; margin:0 auto 32px; position:relative; display:flex; align-items:center; justify-content:center }
+.hero-ring { position:absolute; border-radius:50%; border:1px solid var(--border) }
+.hero-float { position:absolute; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:12px 16px; box-shadow:var(--shadow); font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px; animation:fadeUp .6s ease both; white-space:nowrap }
+.role-pills { display:flex; gap:8px; margin-bottom:26px }
+.role-pill { flex:1; background:var(--bg2); border:1.5px solid var(--border); border-radius:8px; padding:12px 8px; cursor:pointer; transition:all .18s; text-align:center }
+.role-pill:hover { border-color:var(--accent); background:var(--accent-lt) }
+.role-pill.active { border-color:var(--accent); background:var(--accent-lt); box-shadow:0 0 0 3px rgba(45,58,140,.1) }
+.role-pill-icon { font-size:20px; margin-bottom:5px }
+.role-pill-label { font-size:11px; font-weight:600; color:var(--text2) }
+.role-pill.active .role-pill-label { color:var(--accent) }
+.show-hide { position:absolute; right:12px; top:50%; transform:translateY(-50%) translateY(11px); font-size:15px; cursor:pointer; color:var(--text3); padding:4px }
+.show-hide:hover { color:var(--text2) }
+.auth-footer { font-size:13px; color:var(--text2); text-align:center; margin-top:22px }
+.link { color:var(--accent); text-decoration:none; font-weight:600; cursor:pointer }
+.link:hover { color:var(--accent2); text-decoration:underline }
+
+/* ── SIDEBAR ─────────────────────────────────────── */
+.layout { display:flex; min-height:100vh }
+.sidebar { width:var(--sidebar-w); background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:100; transition:width .28s cubic-bezier(.4,0,.2,1); overflow:hidden; box-shadow:1px 0 0 var(--border) }
+.sidebar.collapsed { width:var(--sidebar-c) }
+.sidebar-head { padding:16px 16px 14px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border); min-height:var(--nav-h) }
+.s-logo { width:30px; height:30px; border-radius:8px; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; color:#fff }
+.s-name { font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--text); white-space:nowrap }
+.s-toggle { margin-left:auto; width:26px; height:26px; border-radius:6px; background:var(--bg2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; color:var(--text2); flex-shrink:0; transition:all .18s }
+.s-toggle:hover { background:var(--accent-lt); color:var(--accent) }
+.sidebar-body { flex:1; overflow-y:auto; padding:10px 0 }
+.nav-group { margin-bottom:2px }
+.nav-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--text3); padding:14px 20px 6px; white-space:nowrap }
+.collapsed .nav-label { display:none }
+.nav-item { display:flex; align-items:center; gap:10px; padding:9px 16px; cursor:pointer; transition:all .16s; color:var(--text2); font-size:13.5px; font-weight:500; border-radius:7px; margin:0 8px; position:relative; white-space:nowrap }
+.nav-item:hover { color:var(--text); background:var(--bg2) }
+.nav-item.active { color:var(--accent); background:var(--accent-lt); font-weight:600 }
+.nav-item.active::before { content:''; position:absolute; left:-8px; top:20%; height:60%; width:3px; background:var(--accent); border-radius:0 3px 3px 0 }
+.nav-ic { font-size:17px; flex-shrink:0; width:22px; display:flex; align-items:center; justify-content:center }
+.nav-txt { flex:1 }
+.nav-badge { background:var(--amber); color:#fff; font-size:10px; font-weight:700; padding:1px 7px; border-radius:10px }
+.sidebar-foot { padding:12px 16px; border-top:1px solid var(--border) }
+.user-tile { display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:8px; cursor:pointer; transition:all .18s }
+.user-tile:hover { background:var(--bg2) }
+.avatar { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; color:#fff }
+.user-nm { font-size:13px; font-weight:600; white-space:nowrap }
+.user-rl { font-size:11px; color:var(--text2) }
+
+/* ── TOPBAR ──────────────────────────────────────── */
+.topbar { position:fixed; top:0; right:0; left:var(--sidebar-w); height:var(--nav-h); background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 24px; gap:14px; z-index:99; transition:left .28s cubic-bezier(.4,0,.2,1) }
+.topbar.col { left:var(--sidebar-c) }
+.tb-title { font-family:'Playfair Display',serif; font-size:17px; font-weight:600; color:var(--text) }
+.tb-spacer { flex:1 }
+.search-wrap { display:flex; align-items:center; gap:7px; background:var(--bg2); border:1px solid var(--border); border-radius:7px; padding:7px 12px; min-width:210px; transition:all .18s }
+.search-wrap:focus-within { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(45,58,140,.08) }
+.search-wrap input { background:none; border:none; outline:none; color:var(--text); font-family:'Outfit',sans-serif; font-size:13px; flex:1 }
+.search-wrap input::placeholder { color:var(--text3) }
+.icon-btn { position:relative; width:36px; height:36px; border-radius:7px; background:var(--bg2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:17px; color:var(--text2); transition:all .18s }
+.icon-btn:hover { background:var(--accent-lt); color:var(--accent); border-color:rgba(45,58,140,.2) }
+.notif-dot { position:absolute; top:7px; right:7px; width:7px; height:7px; border-radius:50%; background:var(--rose); border:1.5px solid var(--surface); animation:pulse2 2s ease infinite }
+
+/* ── MAIN ────────────────────────────────────────── */
+.main { margin-left:var(--sidebar-w); margin-top:var(--nav-h); padding:28px; min-height:calc(100vh - var(--nav-h)); transition:margin-left .28s cubic-bezier(.4,0,.2,1); background:var(--bg) }
+.main.col { margin-left:var(--sidebar-c) }
+.page-in { animation:fadeUp .4s ease both }
+
+/* ── STAT CARDS ──────────────────────────────────── */
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:26px }
+.stat-card  { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:20px; animation:fadeUp .5s ease both; transition:all .22s; position:relative; overflow:hidden }
+.stat-card:hover { box-shadow:var(--shadow); transform:translateY(-2px) }
+.stat-accent { position:absolute; top:0; right:0; width:64px; height:64px; border-radius:0 var(--r) 0 64px; opacity:.07 }
+.stat-icon { font-size:22px; margin-bottom:12px }
+.stat-val  { font-family:'Playfair Display',serif; font-size:34px; font-weight:700; line-height:1; margin-bottom:4px }
+.stat-lbl  { font-size:13px; color:var(--text2); font-weight:500 }
+.stat-chg  { font-size:11px; font-weight:600; margin-top:8px; display:flex; align-items:center; gap:4px }
+.chg-up   { color:var(--teal) }
+.chg-dn   { color:var(--rose) }
+
+/* ── GRIDS ───────────────────────────────────────── */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:20px }
+.g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px }
+.span2 { grid-column:span 2 }
+
+/* ── SECTION ─────────────────────────────────────── */
+.sec { margin-bottom:28px; animation:fadeUp .45s ease both }
+.sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px }
+.sec-title { font-size:15px; font-weight:700; color:var(--text) }
+
+/* ── TABLE ───────────────────────────────────────── */
+.tbl-wrap { overflow-x:auto; border-radius:var(--r); border:1px solid var(--border); background:var(--surface) }
+table { width:100%; border-collapse:collapse }
+thead { background:var(--bg2) }
+th { padding:11px 16px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text2); border-bottom:1px solid var(--border) }
+td { padding:12px 16px; font-size:13.5px; border-bottom:1px solid var(--border) }
+tr:last-child td { border-bottom:none }
+tr:hover td { background:var(--bg2) }
+.td-main { font-weight:600; color:var(--text) }
+
+/* ── PROGRESS ────────────────────────────────────── */
+.prog-row { margin-bottom:14px }
+.prog-meta { display:flex; justify-content:space-between; font-size:12.5px; color:var(--text2); margin-bottom:6px }
+.prog-meta strong { color:var(--text) }
+.prog-bar { height:5px; background:var(--bg3); border-radius:10px; overflow:hidden }
+.prog-fill { height:100%; border-radius:10px; background:var(--accent); transition:width 1.2s cubic-bezier(.4,0,.2,1) }
+.prog-fill.am { background:var(--amber) }
+.prog-fill.tl { background:var(--teal) }
+.prog-fill.ro { background:var(--rose) }
+
+/* ── CHARTS ──────────────────────────────────────── */
+.chart-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:22px }
+.chart-lbl { font-size:14px; font-weight:700; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center }
+.bar-area  { display:flex; align-items:flex-end; gap:6px; height:150px; padding-top:10px }
+.bar-col   { display:flex; flex-direction:column; align-items:center; gap:5px; flex:1 }
+.bar       { width:100%; border-radius:5px 5px 0 0; min-height:4px; transition:height .9s cubic-bezier(.4,0,.2,1); cursor:pointer; position:relative }
+.bar:hover::after { content:attr(data-v); position:absolute; top:-22px; left:50%; transform:translateX(-50%); background:var(--accent); color:#fff; font-size:10px; font-weight:700; padding:2px 7px; border-radius:4px; white-space:nowrap }
+.bar-lbl { font-size:10px; color:var(--text3); text-align:center }
+
+/* ── ASSIGNMENTS ─────────────────────────────────── */
+.asn-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px }
+.asn-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:18px; cursor:pointer; transition:all .22s; animation:fadeUp .4s ease both }
+.asn-card:hover { box-shadow:var(--shadow); border-color:var(--border2); transform:translateY(-2px) }
+.asn-top  { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px }
+.asn-title { font-size:14px; font-weight:700; margin-bottom:3px; line-height:1.4 }
+.asn-course { font-size:11px; color:var(--text2); font-weight:500 }
+.asn-meta { display:flex; gap:14px; font-size:12px; color:var(--text2); margin-top:12px }
+.asn-foot { display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding-top:12px; border-top:1px solid var(--border) }
+
+/* ── FILTERS ─────────────────────────────────────── */
+.filter-row { display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap }
+.f-chip { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; transition:all .18s; background:var(--surface); border:1.5px solid var(--border); color:var(--text2) }
+.f-chip:hover,.f-chip.on { background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 2px 8px rgba(45,58,140,.25) }
+
+/* ── UPLOAD ──────────────────────────────────────── */
+.drop-zone { border:2px dashed var(--border2); border-radius:var(--r); padding:36px; text-align:center; cursor:pointer; transition:all .18s }
+.drop-zone:hover,.drop-zone.drag { border-color:var(--accent); background:var(--accent-lt) }
+.drop-icon { font-size:36px; margin-bottom:10px; opacity:.5 }
+.drop-txt  { font-size:14px; font-weight:600; margin-bottom:5px }
+.drop-sub  { font-size:12px; color:var(--text2) }
+
+/* ── TOGGLE ──────────────────────────────────────── */
+.tgl-wrap { display:flex; align-items:center; gap:12px; padding:14px 0; border-bottom:1px solid var(--border) }
+.tgl-wrap:last-child { border-bottom:none }
+.tgl { width:40px; height:22px; border-radius:11px; background:var(--bg3); border:1px solid var(--border2); cursor:pointer; position:relative; transition:all .2s; flex-shrink:0 }
+.tgl.on { background:var(--accent); border-color:var(--accent) }
+.tgl::after { content:''; position:absolute; width:16px; height:16px; border-radius:50%; background:#fff; top:2px; left:2px; transition:all .2s; box-shadow:0 1px 3px rgba(0,0,0,.2) }
+.tgl.on::after { left:20px }
+.tgl-info .tgl-lbl { font-size:13.5px; font-weight:600 }
+.tgl-info .tgl-sub { font-size:11.5px; color:var(--text2) }
+
+/* ── GRADING ─────────────────────────────────────── */
+.grade-big { font-family:'Playfair Display',serif; font-size:52px; font-weight:700; text-align:center; line-height:1 }
+.rubric-row { display:flex; align-items:center; gap:14px; padding:11px 0; border-bottom:1px solid var(--border) }
+.rubric-row:last-child { border-bottom:none }
+.r-label { font-size:13.5px; font-weight:500; flex:1 }
+.r-max   { font-size:11px; color:var(--text2) }
+.r-input { width:60px; text-align:center; font-size:15px; font-weight:700; background:var(--bg2); border:1.5px solid var(--border); border-radius:6px; padding:6px; color:var(--text); outline:none; font-family:'Playfair Display',serif; transition:all .18s }
+.r-input:focus { border-color:var(--accent) }
+
+/* ── TIMELINE ────────────────────────────────────── */
+.tl { position:relative; padding-left:28px }
+.tl::before { content:''; position:absolute; left:9px; top:6px; bottom:6px; width:1.5px; background:var(--border) }
+.tl-item { position:relative; margin-bottom:22px }
+.tl-item::before { content:''; position:absolute; left:-23px; top:5px; width:10px; height:10px; border-radius:50%; background:var(--accent); border:2px solid var(--surface); box-shadow:0 0 0 3px rgba(45,58,140,.15) }
+.tl-date { font-size:10.5px; color:var(--text3); margin-bottom:5px; font-weight:700; text-transform:uppercase; letter-spacing:.07em }
+.tl-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px; box-shadow:var(--shadow-sm) }
+
+/* ── STEPS ───────────────────────────────────────── */
+.steps { display:flex; align-items:center; margin-bottom:28px }
+.step  { display:flex; align-items:center; gap:7px; flex:1 }
+.step-n { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; transition:all .3s }
+.step-n.done   { background:var(--teal); color:#fff }
+.step-n.active { background:var(--accent); color:#fff; box-shadow:0 0 0 4px rgba(45,58,140,.15) }
+.step-n.pend   { background:var(--bg3); color:var(--text3); border:1.5px solid var(--border) }
+.step-lbl { font-size:12px; font-weight:600; color:var(--text2) }
+.step-lbl.active { color:var(--accent) }
+.step-ln  { flex:1; height:1.5px; background:var(--border); margin:0 6px; transition:background .3s }
+.step-ln.done { background:var(--teal) }
+
+/* ── TAGS ────────────────────────────────────────── */
+.tags { display:flex; flex-wrap:wrap; gap:6px }
+.tag  { padding:4px 11px; border-radius:20px; font-size:12px; font-weight:500; background:var(--bg2); border:1px solid var(--border); color:var(--text2); cursor:pointer; transition:all .18s }
+.tag.on,.tag:hover { background:var(--accent-lt); border-color:rgba(45,58,140,.3); color:var(--accent) }
+
+/* ── TOAST ───────────────────────────────────────── */
+.toast-stack { position:fixed; top:18px; right:18px; z-index:9999; display:flex; flex-direction:column; gap:8px }
+.toast { display:flex; align-items:center; gap:10px; padding:13px 16px; border-radius:9px; min-width:280px; max-width:360px; font-size:13.5px; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-lg); animation:toastIn .28s ease both; font-weight:500 }
+.toast.ok   { border-left:3px solid var(--teal) }
+.toast.err  { border-left:3px solid var(--rose) }
+.toast.info { border-left:3px solid var(--accent) }
+.toast-ic   { font-size:17px; flex-shrink:0 }
+.toast-msg  { flex:1 }
+.toast-x    { cursor:pointer; color:var(--text3); font-size:15px; flex-shrink:0 }
+.toast-x:hover { color:var(--text) }
+
+/* ── MODAL ───────────────────────────────────────── */
+.overlay { position:fixed; inset:0; background:rgba(26,23,20,.4); backdrop-filter:blur(3px); z-index:500; display:flex; align-items:center; justify-content:center; padding:20px; animation:fadeIn .2s ease }
+.modal   { background:var(--surface); border:1px solid var(--border); border-radius:14px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-lg); animation:fadeUp .28s ease }
+.modal-h { padding:22px 26px 0; display:flex; align-items:center; justify-content:space-between }
+.modal-title { font-family:'Playfair Display',serif; font-size:19px; font-weight:700 }
+.modal-x { width:30px; height:30px; border-radius:6px; background:var(--bg2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text2); font-size:16px; transition:all .18s }
+.modal-x:hover { background:var(--rose-lt); color:var(--rose) }
+.modal-b { padding:22px 26px }
+.modal-f { padding:0 26px 22px; display:flex; gap:10px; justify-content:flex-end }
+
+/* ── DROPDOWN ────────────────────────────────────── */
+.dd-menu { position:absolute; top:calc(100% + 7px); right:0; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); min-width:180px; overflow:hidden; box-shadow:var(--shadow-lg); z-index:300; animation:slideDown .18s ease }
+.dd-item { display:flex; align-items:center; gap:9px; padding:10px 15px; font-size:13px; cursor:pointer; transition:background .15s; color:var(--text2) }
+.dd-item:hover { background:var(--bg2); color:var(--text) }
+.dd-item.danger { color:var(--rose) }
+.dd-sep { height:1px; background:var(--border); margin:4px 0 }
+
+/* ── NOTIF PANEL ─────────────────────────────────── */
+.notif-panel { position:absolute; top:calc(100% + 7px); right:0; width:330px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); box-shadow:var(--shadow-lg); z-index:200; animation:slideDown .18s ease; overflow:hidden }
+.np-head { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between }
+.np-title { font-size:14px; font-weight:700 }
+.np-item { padding:12px 18px; border-bottom:1px solid var(--border); display:flex; gap:11px; cursor:pointer; transition:background .15s }
+.np-item:hover { background:var(--bg2) }
+.np-item.unread { background:rgba(45,58,140,.03) }
+.np-ic   { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0 }
+.np-txt  { font-size:12.5px; line-height:1.5; color:var(--text2) }
+.np-time { font-size:11px; color:var(--text3); margin-top:3px }
+
+/* ── FAB ─────────────────────────────────────────── */
+.fab { position:fixed; bottom:26px; right:26px; width:50px; height:50px; border-radius:50%; background:var(--accent); color:#fff; font-size:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(45,58,140,.35); border:none; z-index:98; transition:all .2s }
+.fab:hover { background:var(--accent2); transform:scale(1.07); box-shadow:0 8px 28px rgba(45,58,140,.45) }
+
+/* ── PAGINATION ──────────────────────────────────── */
+.pages { display:flex; gap:5px; justify-content:flex-end; margin-top:14px }
+.pg { width:32px; height:32px; border-radius:6px; display:flex; align-items:center; justify-content:center; background:var(--surface); border:1px solid var(--border); cursor:pointer; font-size:12.5px; font-weight:600; transition:all .18s; color:var(--text2) }
+.pg:hover,.pg.on { background:var(--accent); border-color:var(--accent); color:#fff }
+
+/* ── HEALTH ──────────────────────────────────────── */
+.health-row { display:flex; align-items:center; gap:11px; padding:10px 0; border-bottom:1px solid var(--border) }
+.health-row:last-child { border-bottom:none }
+.h-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0 }
+.h-green  { background:var(--teal) }
+.h-orange { background:var(--amber); animation:pulse2 2s ease infinite }
+.h-red    { background:var(--rose); animation:pulse2 1s ease infinite }
+.h-lbl { font-size:13px; font-weight:500; flex:1 }
+.h-val { font-size:12px; color:var(--text2) }
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media (max-width:900px) {
+  :root { --sidebar-w:0px }
+  .sidebar { transform:translateX(-100%) }
+  .sidebar.mob { transform:translateX(0); width:252px }
+  .topbar { left:0!important }
+  .main { margin-left:0!important; padding:16px }
+  .g2,.g3 { grid-template-columns:1fr }
+  .span2 { grid-column:span 1 }
+  .stats-grid { grid-template-columns:1fr 1fr }
+  .auth-right { width:100% }
+  .auth-left { display:none }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ─── STATE ─────────────────────────────────────── */
+const S = {
+  user:null, role:null, page:'login',
+  sidebarCol:false,
+  notifOpen:false, profileOpen:false,
+  modal:null,
+  filterActive:'all',
+  gradingIdx:0,
+  step:0,
+  toasts:[],
+  rolePick:'student',
+};
+
+const USERS = {
+  student: {name:'Aanya Mehta',email:'aanya@saims.edu',role:'Student',course:'B.Tech CS',year:'3rd Year',av:'AM',color:'#2d3a8c'},
+  teacher: {name:'Dr. Rohan Verma',email:'rohan@saims.edu',role:'Teacher',dept:'Computer Science',av:'RV',color:'#1a7a6e'},
+  admin:   {name:'Sneha Kapoor',email:'sneha@saims.edu',role:'Admin',av:'SK',color:'#c47a1e'},
+};
+
+const ASSIGNMENTS = [
+  {id:1,title:'Binary Search Trees Implementation',course:'Data Structures',due:'Apr 5',status:'pending',sub:18,total:32,pts:100},
+  {id:2,title:'REST API Design Patterns',course:'Web Development',due:'Apr 8',status:'submitted',sub:24,total:32,pts:80},
+  {id:3,title:'Neural Network from Scratch',course:'Machine Learning',due:'Apr 12',status:'graded',sub:30,total:32,pts:100,grade:88},
+  {id:4,title:'SQL Query Optimisation',course:'Database Systems',due:'Mar 30',status:'late',sub:12,total:32,pts:60},
+  {id:5,title:'Design Patterns in OOP',course:'Software Engineering',due:'Apr 15',status:'pending',sub:8,total:32,pts:100},
+  {id:6,title:'Linux Shell Scripting',course:'OS Concepts',due:'Apr 3',status:'submitted',sub:29,total:32,pts:75},
+];
+
+const STUDENTS = [
+  {id:1,name:'Aanya Mehta',roll:'CS21001',grade:88,status:'submitted'},
+  {id:2,name:'Vivek Sharma',roll:'CS21002',grade:92,status:'graded'},
+  {id:3,name:'Pooja Rao',roll:'CS21003',grade:null,status:'submitted'},
+  {id:4,name:'Kiran Das',roll:'CS21004',grade:null,status:'pending'},
+  {id:5,name:'Arjun Nair',roll:'CS21005',grade:76,status:'graded'},
+];
+
+const LOGS = [
+  {week:'Week 12',date:'24–28 Mar',tasks:'Implemented OAuth2 flow, reviewed pull requests, fixed 3 auth bugs',learn:'JWT refresh token patterns, PKCE flow',skills:['Node.js','OAuth2','JWT']},
+  {week:'Week 11',date:'17–21 Mar',tasks:'Database schema redesign, unit tests for user service, API documentation',learn:'PostgreSQL query optimisation via indexing',skills:['PostgreSQL','Jest','SQL']},
+  {week:'Week 10',date:'10–14 Mar',tasks:'CI/CD pipeline with GitHub Actions, Docker containerisation setup',learn:'Docker multi-stage builds and layer caching',skills:['Docker','CI/CD','GitHub Actions']},
+];
+
+const USERS2 = [
+  {id:1,name:'Aanya Mehta',email:'aanya@saims.edu',role:'Student',status:'active',joined:'Jan 2024'},
+  {id:2,name:'Vivek Sharma',email:'vivek@saims.edu',role:'Student',status:'active',joined:'Jan 2024'},
+  {id:3,name:'Dr. Rohan Verma',email:'rohan@saims.edu',role:'Teacher',status:'active',joined:'Aug 2023'},
+  {id:4,name:'Prof. Divya Menon',email:'divya@saims.edu',role:'Teacher',status:'active',joined:'Aug 2023'},
+  {id:5,name:'Sneha Kapoor',email:'sneha@saims.edu',role:'Admin',status:'active',joined:'Jun 2023'},
+  {id:6,name:'Arjun Nair',email:'arjun@saims.edu',role:'Student',status:'inactive',joined:'Jan 2024'},
+];
+
+const NOTIFS = [
+  {id:1,ic:'📝',txt:'"Data Structures" assignment deadline is tomorrow',time:'2h ago',unread:true,bg:'rgba(45,58,140,.08)'},
+  {id:2,ic:'✅',txt:'Your Web Dev submission has been graded — 88/100',time:'5h ago',unread:true,bg:'rgba(26,122,110,.08)'},
+  {id:3,ic:'💼',txt:'Weekly internship log is due in 2 days',time:'1d ago',unread:false,bg:'rgba(196,122,30,.08)'},
+  {id:4,ic:'📣',txt:'New assignment posted: Machine Learning Week 8',time:'2d ago',unread:false,bg:'rgba(45,58,140,.06)'},
+];
+
+/* ─── UTILS ──────────────────────────────────────── */
+function toast(msg, type='info'){
+  const id=Date.now(); S.toasts.push({id,msg,type});
+  renderToasts();
+  setTimeout(()=>{S.toasts=S.toasts.filter(t=>t.id!==id);renderToasts();},3400);
+}
+function renderToasts(){
+  let el=document.querySelector('.toast-stack');
+  if(!el){el=document.createElement('div');el.className='toast-stack';document.body.appendChild(el);}
+  const ic={ok:'✅',err:'❌',info:'ℹ️'};
+  el.innerHTML=S.toasts.map(t=>`
+    <div class="toast ${t.type}">
+      <span class="toast-ic">${ic[t.type]||'💬'}</span>
+      <span class="toast-msg">${t.msg}</span>
+      <span class="toast-x" onclick="rmToast(${t.id})">✕</span>
+    </div>`).join('');
+}
+window.rmToast=(id)=>{S.toasts=S.toasts.filter(t=>t.id!==id);renderToasts();};
+
+function go(p){S.page=p;S.notifOpen=false;S.profileOpen=false;S.modal=null;render();window.scrollTo(0,0);}
+window.go=go;
+function pickRole(r){S.rolePick=r;render();}
+window.pickRole=pickRole;
+function login(r){S.user=USERS[r];S.role=r;S.page=`${r}-home`;render();toast(`Welcome back, ${USERS[r].name.split(' ')[0]}! 👋`,'ok');}
+window.login=login;
+function logout(){S.user=null;S.role=null;S.page='login';render();toast('Signed out successfully','info');}
+window.logout=logout;
+function toggleSidebar(){S.sidebarCol=!S.sidebarCol;render();}
+window.toggleSidebar=toggleSidebar;
+function toggleNotif(){S.notifOpen=!S.notifOpen;S.profileOpen=false;render();}
+window.toggleNotif=toggleNotif;
+function toggleProfile(){S.profileOpen=!S.profileOpen;S.notifOpen=false;render();}
+window.toggleProfile=toggleProfile;
+function showModal(t){S.modal=t;render();}
+window.showModal=showModal;
+function closeModal(){S.modal=null;render();}
+window.closeModal=closeModal;
+function setFilter(f){S.filterActive=f;render();}
+window.setFilter=setFilter;
+function setGrade(i){S.gradingIdx=i;render();}
+window.setGrade=setGrade;
+function setStep(s){S.step=s;render();}
+window.setStep=setStep;
+
+/* ─── HELPERS ────────────────────────────────────── */
+function sbadge(status){
+  const m={pending:['b-amber','⏳ Pending'],submitted:['b-indigo','📤 Submitted'],graded:['b-teal','✅ Graded'],late:['b-rose','⚠️ Late']};
+  const [c,l]=m[status]||['b-gray',status];
+  return `<span class="badge ${c}">${l}</span>`;
+}
+function avatarEl(name,color,size=30){
+  const init=name.split(' ').map(n=>n[0]).join('').substring(0,2);
+  return `<div class="avatar" style="background:${color};width:${size}px;height:${size}px;font-size:${Math.round(size*0.38)}px">${init}</div>`;
+}
+
+/* ─── AUTH PAGES ─────────────────────────────────── */
+function renderLogin(){
+  const rp=S.rolePick||'student';
+  const heroCards=[
+    {icon:'📊',text:'89% submission rate this week',top:'60px',left:'0',delay:'.1s'},
+    {icon:'🏆',text:'Alex scored 94/100',top:'120px',right:'0',delay:'.3s'},
+    {icon:'✅',text:'15 assignments graded today',bottom:'60px',left:'10px',delay:'.5s'},
+  ];
+  return `
+  <div class="auth-wrap">
+    <div class="auth-left">
+      <div style="max-width:400px;width:100%">
+        <div class="auth-brand" style="margin-bottom:40px">
+          <div class="auth-brand-mark">🎓</div>
+          <div class="auth-brand-name">SAIMS</div>
+        </div>
+        <h1 style="font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text)">Smart learning,<br/><span style="color:var(--accent)">managed well.</span></h1>
+        <p style="font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:40px">The all-in-one platform for assignments, internship tracking, and grading — designed for modern academic institutions.</p>
+        <div style="display:flex;gap:18px">
+          ${[['342','Students enrolled'],['28','Faculty members'],['1.8k','Submissions this term']].map(([v,l])=>`
+            <div>
+              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--accent)">${v}</div>
+              <div style="font-size:12px;color:var(--text2)">${l}</div>
+            </div>`).join('<div style="width:1px;background:var(--border);align-self:stretch"></div>')}
+        </div>
+        <div style="margin-top:40px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-sm)">
+          ${[['🎓','Aanya submitted her BST assignment',true],['✅','Dr. Rohan graded 12 submissions',false],['📋','Week 12 internship log approved',false]].map((n,i)=>`
+            <div style="display:flex;align-items:center;gap:10px;${i<2?'padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:10px':''}">
+              <div style="width:30px;height:30px;border-radius:7px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">${n[0]}</div>
+              <span style="font-size:12.5px;color:var(--text2);flex:1">${n[1]}</span>
+              ${n[2]?'<span class="badge b-indigo" style="font-size:10px">New</span>':''}
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-card">
+        <h2 class="auth-headline">Sign in</h2>
+        <p class="auth-sub">Choose your role and enter your credentials.</p>
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px">Access as</p>
+        <div class="role-pills">
+          ${[['student','👨‍🎓','Student'],['teacher','👩‍🏫','Teacher'],['admin','🛠️','Admin']].map(([r,ic,lb])=>`
+            <div class="role-pill ${rp===r?'active':''}" onclick="pickRole('${r}')">
+              <div class="role-pill-icon">${ic}</div>
+              <div class="role-pill-label">${lb}</div>
+            </div>`).join('')}
+        </div>
+        <div class="input-wrap">
+          <label class="input-label">Email address</label>
+          <input class="input" type="email" value="${USERS[rp].email}" placeholder="you@saims.edu"/>
+        </div>
+        <div class="input-wrap" style="position:relative">
+          <label class="input-label">Password</label>
+          <input class="input" type="password" id="pwf" value="••••••••"/>
+          <span class="show-hide" onclick="(()=>{const i=document.getElementById('pwf');i.type=i.type==='password'?'text':'password';})()">👁</span>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:22px">
+          <a class="link" style="font-size:13px" onclick="go('forgot')">Forgot password?</a>
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" onclick="login('${rp}')">
+          Sign in as ${rp.charAt(0).toUpperCase()+rp.slice(1)}
+        </button>
+        <div class="auth-footer">No account? <a class="link" onclick="go('register')">Register here</a></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderRegister(){
+  return `
+  <div class="auth-wrap">
+    <div class="auth-left">
+      <div style="max-width:400px">
+        <div class="auth-brand"><div class="auth-brand-mark">🎓</div><div class="auth-brand-name">SAIMS</div></div>
+        <div style="margin-top:40px;font-family:'Playfair Display',serif;font-size:34px;font-weight:700;line-height:1.3;color:var(--text)">Join thousands of students on SAIMS</div>
+        <p style="margin-top:16px;font-size:14px;color:var(--text2);line-height:1.7">Track your assignments, submit internship logs, and receive meaningful feedback — all in one place.</p>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-card">
+        <h2 class="auth-headline">Create account</h2>
+        <p class="auth-sub">Register as a student to get started.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+          <div><label class="input-label">First name</label><input class="input" placeholder="Aanya"/></div>
+          <div><label class="input-label">Last name</label><input class="input" placeholder="Mehta"/></div>
+        </div>
+        <div class="input-wrap"><label class="input-label">Institutional email</label><input class="input" type="email" placeholder="aanya@saims.edu"/></div>
+        <div class="input-wrap"><label class="input-label">Student ID</label><input class="input" placeholder="CS2024001"/></div>
+        <div class="input-wrap"><label class="input-label">Password</label><input class="input" type="password" placeholder="Create a strong password"/></div>
+        <button class="btn btn-primary btn-full btn-lg" onclick="login('student');toast('Account created — welcome! 🎉','ok')">Create Account</button>
+        <div class="auth-footer">Already registered? <a class="link" onclick="go('login')">Sign in</a></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderForgot(){
+  return `
+  <div class="auth-wrap">
+    <div class="auth-left">
+      <div style="max-width:400px">
+        <div class="auth-brand"><div class="auth-brand-mark">🎓</div><div class="auth-brand-name">SAIMS</div></div>
+        <div style="margin-top:40px;font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:var(--text)">Reset your password</div>
+        <p style="margin-top:14px;font-size:14px;color:var(--text2);line-height:1.7">We'll send a secure link to your institutional email address.</p>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-card">
+        <div style="text-align:center;font-size:48px;margin-bottom:16px">🔐</div>
+        <h2 class="auth-headline" style="text-align:center">Forgot password?</h2>
+        <p class="auth-sub" style="text-align:center">Enter your email and we'll send you a reset link.</p>
+        <div class="input-wrap"><label class="input-label">Email address</label><input class="input" type="email" placeholder="you@saims.edu"/></div>
+        <button class="btn btn-primary btn-full btn-lg" onclick="toast('Reset link sent! Check your inbox 📬','ok');go('login')">Send Reset Link</button>
+        <div class="auth-footer"><a class="link" onclick="go('login')">← Back to sign in</a></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ─── LAYOUT WRAPPER ─────────────────────────────── */
+function wrap(content, title='', sub=''){
+  const r=S.role; const u=S.user; const c=S.sidebarCol;
+  const p=S.page;
+  const nav = r==='student'
+    ?[['🏠','Dashboard','student-home'],['📚','Assignments','student-asn'],['💼','Internship','student-intern'],['📊','Reports','reports']]
+    :r==='teacher'
+    ?[['🏠','Dashboard','teacher-home'],['📝','Assignments','teacher-asn'],['✅','Grading','grading'],['💼','Intern. Logs','teacher-intern'],['📊','Reports','reports']]
+    :[['🏠','Dashboard','admin-home'],['👥','Users','admin-users'],['📚','Assignments','teacher-asn'],['📊','Reports','reports']];
+  const uc=USERS[r]?.color||'#2d3a8c';
+  const unread=NOTIFS.filter(n=>n.unread).length;
+
+  const notifPanel = S.notifOpen?`
+    <div class="notif-panel">
+      <div class="np-head"><span class="np-title">Notifications</span><span style="font-size:11px;color:var(--accent);font-weight:600">${unread} new</span></div>
+      ${NOTIFS.map(n=>`
+        <div class="np-item ${n.unread?'unread':''}">
+          <div class="np-ic" style="background:${n.bg}">${n.ic}</div>
+          <div><div class="np-txt">${n.txt}</div><div class="np-time">${n.time}</div></div>
+        </div>`).join('')}
+      <div style="padding:11px;text-align:center"><span style="font-size:12px;color:var(--accent);font-weight:600;cursor:pointer">View all</span></div>
+    </div>`:''
+
+  const profileMenu = S.profileOpen?`
+    <div class="dd-menu">
+      <div style="padding:11px 15px;border-bottom:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:700">${u?.name}</div>
+        <div style="font-size:11px;color:var(--text2)">${u?.email}</div>
+      </div>
+      <div class="dd-item" onclick="toast('Profile settings coming soon','info')">👤 &nbsp;My Profile</div>
+      <div class="dd-item" onclick="toast('Settings opened','info')">⚙️ &nbsp;Settings</div>
+      <div class="dd-sep"></div>
+      <div class="dd-item danger" onclick="logout()">🚪 &nbsp;Sign Out</div>
+    </div>`:''
+
+  return `
+  <div class="layout">
+    <aside class="sidebar ${c?'collapsed':''}">
+      <div class="sidebar-head">
+        <div class="s-logo">🎓</div>
+        ${!c?`<div class="s-name">SAIMS</div>`:''}
+        <div class="s-toggle" onclick="toggleSidebar()">${c?'▶':'◀'}</div>
+      </div>
+      <div class="sidebar-body">
+        ${!c?'<div class="nav-label">Menu</div>':''}
+        ${nav.map(([ic,lb,pg])=>`
+          <div class="nav-item ${p===pg?'active':''}" onclick="go('${pg}')">
+            <span class="nav-ic">${ic}</span>
+            <span class="nav-txt">${lb}</span>
+          </div>`).join('')}
+        ${!c?'<div class="nav-label" style="margin-top:8px">Account</div>':''}
+        <div class="nav-item" onclick="toast('Settings coming soon','info')"><span class="nav-ic">⚙️</span><span class="nav-txt">Settings</span></div>
+      </div>
+      <div class="sidebar-foot">
+        <div class="user-tile" onclick="toggleProfile()">
+          ${avatarEl(u?.name||'?',uc,30)}
+          ${!c?`<div><div class="user-nm">${u?.name?.split(' ')[0]}</div><div class="user-rl">${u?.role}</div></div>`:''}
+        </div>
+      </div>
+    </aside>
+
+    <div class="topbar ${c?'col':''}">
+      <div>
+        <div class="tb-title">${title}</div>
+        ${sub?`<div style="font-size:11px;color:var(--text3);margin-top:1px">${sub}</div>`:''}
+      </div>
+      <div class="tb-spacer"></div>
+      <div class="search-wrap">
+        <span style="font-size:14px;color:var(--text3)">🔍</span>
+        <input placeholder="Search anything…"/>
+      </div>
+      <div style="position:relative">
+        <div class="icon-btn" onclick="toggleNotif()">🔔${unread?`<span class="notif-dot"></span>`:''}</div>
+        ${notifPanel}
+      </div>
+      <div style="position:relative">
+        ${avatarEl(u?.name||'?',uc,34)}
+        <div style="position:absolute;inset:0;cursor:pointer;border-radius:50%" onclick="toggleProfile()"></div>
+        ${profileMenu}
+      </div>
+    </div>
+
+    <main class="main ${c?'col':''} page-in">
+      ${content}
+    </main>
+  </div>`;
+}
+
+/* ─── STUDENT DASHBOARD ──────────────────────────── */
+function renderStudentHome(){
+  const cards=[
+    {ic:'⏳',lbl:'Pending',val:'3',chg:'1 due today',up:false,color:'var(--amber)',bg:'var(--amber-lt)'},
+    {ic:'📤',lbl:'Submitted',val:'8',chg:'+2 this week',up:true,color:'var(--accent)',bg:'var(--accent-lt)'},
+    {ic:'🏆',lbl:'Graded',val:'6',chg:'Avg 87%',up:true,color:'var(--teal)',bg:'var(--teal-lt)'},
+    {ic:'💼',lbl:'Logs Due',val:'1',chg:'Due in 2 days',up:false,color:'var(--rose)',bg:'var(--rose-lt)'},
+  ];
+  return wrap(`
+  <div class="sec" style="animation-delay:.04s">
+    <div class="sec-head">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700">Good morning, Aanya ☀️</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px">Here's what needs your attention today.</div>
+      </div>
+      <button class="btn btn-amber btn-sm" onclick="go('student-asn')">View Assignments</button>
+    </div>
+    <div class="stats-grid">
+      ${cards.map((c,i)=>`
+        <div class="stat-card" style="animation-delay:${i*.07}s">
+          <div class="stat-accent" style="background:${c.color}"></div>
+          <div class="stat-icon" style="color:${c.color}">${c.ic}</div>
+          <div class="stat-val" style="color:${c.color}">${c.val}</div>
+          <div class="stat-lbl">${c.lbl}</div>
+          <div class="stat-chg ${c.up?'chg-up':'chg-dn'}">${c.up?'↑':'↓'} ${c.chg}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="sec" style="animation-delay:.14s">
+      <div class="sec-head"><div class="sec-title">📅 Upcoming Deadlines</div><button class="btn btn-ghost btn-sm" onclick="go('student-asn')">All →</button></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Assignment</th><th>Course</th><th>Due</th><th>Status</th></tr></thead>
+          <tbody>
+            ${ASSIGNMENTS.slice(0,4).map(a=>`
+              <tr>
+                <td class="td-main">${a.title.substring(0,26)}…</td>
+                <td style="color:var(--text2);font-size:12px">${a.course}</td>
+                <td style="font-size:12px;font-weight:600">${a.due}</td>
+                <td>${sbadge(a.status)}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sec" style="animation-delay:.19s">
+      <div class="sec-head"><div class="sec-title">💼 Internship Tracker</div></div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:13px;margin-bottom:18px">
+          <div style="font-size:36px">🏢</div>
+          <div>
+            <div style="font-weight:700;font-size:15px">TechNova Solutions</div>
+            <div style="font-size:12px;color:var(--text2)">Full Stack Developer Intern</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">Jan – Jun 2026 · Week 12/24</div>
+          </div>
+        </div>
+        <div class="prog-row"><div class="prog-meta"><span>Overall Progress</span><strong style="color:var(--accent)">50%</strong></div><div class="prog-bar"><div class="prog-fill" style="width:50%"></div></div></div>
+        <div class="prog-row"><div class="prog-meta"><span>Logs Submitted</span><span>12/24</span></div><div class="prog-bar"><div class="prog-fill tl" style="width:50%"></div></div></div>
+        <div class="prog-row"><div class="prog-meta"><span>Skills Gained</span><span>8 skills</span></div><div class="prog-bar"><div class="prog-fill am" style="width:67%"></div></div></div>
+        <button class="btn btn-outline btn-sm btn-full" style="margin-top:6px" onclick="go('student-intern')">Submit Weekly Log →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" style="animation-delay:.24s">
+    <div class="sec-head"><div class="sec-title">💬 Recent Feedback</div></div>
+    <div class="g3">
+      ${[
+        {teacher:'Dr. Rohan Verma',course:'Web Development',grade:88,text:'Excellent REST API structure. Error handling needs minor improvements. Overall a very clean submission.'},
+        {teacher:'Prof. Divya Menon',course:'Machine Learning',grade:92,text:'Outstanding backpropagation code. Well-commented and efficient. Minor improvement needed in loss function.'},
+        {teacher:'Dr. Lee Park',course:'Data Structures',grade:76,text:'Good grasp of concepts but the time complexity analysis needs deeper review. Revisit amortised analysis.'},
+      ].map(f=>`
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <div><div style="font-weight:700;font-size:14px">${f.course}</div><div style="font-size:11px;color:var(--text2)">${f.teacher}</div></div>
+            <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:${f.grade>=85?'var(--teal)':f.grade>=70?'var(--amber)':'var(--rose)'}">${f.grade}</div>
+          </div>
+          <p style="font-size:13px;color:var(--text2);line-height:1.65">${f.text}</p>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+            <div class="prog-bar"><div class="prog-fill ${f.grade>=85?'tl':f.grade>=70?'am':'ro'}" style="width:${f.grade}%"></div></div>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>
+  `, 'Dashboard', `Welcome back, ${USERS.student.name}`);
+}
+
+/* ─── STUDENT ASSIGNMENTS ────────────────────────── */
+function renderStudentAsn(){
+  const af=S.filterActive||'all';
+  const data=af==='all'?ASSIGNMENTS:ASSIGNMENTS.filter(a=>a.status===af);
+  return wrap(`
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">My Assignments</div>
+    </div>
+    <div class="filter-row">
+      ${['all','pending','submitted','graded','late'].map(f=>`
+        <div class="f-chip ${af===f?'on':''}" onclick="setFilter('${f}')">${f.charAt(0).toUpperCase()+f.slice(1)}${f==='all'?` (${ASSIGNMENTS.length})`:''}</div>`).join('')}
+    </div>
+    <div class="asn-grid">
+      ${data.map((a,i)=>`
+        <div class="asn-card" style="animation-delay:${i*.06}s" onclick="go('submission')">
+          <div class="asn-top">
+            <div>
+              <div class="asn-title">${a.title}</div>
+              <div class="asn-course">${a.course}</div>
+            </div>
+            ${sbadge(a.status)}
+          </div>
+          <p style="font-size:12.5px;color:var(--text2);line-height:1.6">Submit a complete implementation with documentation and test cases. Code must be clean and well-commented.</p>
+          <div class="asn-meta">
+            <span>📅 ${a.due}</span>
+            <span>⭐ ${a.pts} pts</span>
+            ${a.grade?`<span style="color:var(--teal);font-weight:600">✅ ${a.grade}/${a.pts}</span>`:''}
+          </div>
+          <div class="asn-foot">
+            <span style="font-size:11px;color:var(--text3)">Posted 5 days ago</span>
+            <button class="btn btn-primary btn-sm" onclick="go('submission');event.stopPropagation()">
+              ${a.status==='graded'?'View Grade':a.status==='submitted'?'View Submission':'Submit Now'}
+            </button>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>
+  `, 'Assignments', '6 assignments this semester');
+}
+
+/* ─── SUBMISSION PAGE ────────────────────────────── */
+function renderSubmission(){
+  return wrap(`
+  <div style="max-width:740px;margin:0 auto">
+    <button class="btn btn-ghost btn-sm" onclick="go('student-asn')" style="margin-bottom:16px">← Back to Assignments</button>
+    <div class="card" style="margin-bottom:18px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px">
+        <div>
+          <h2 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:700;margin-bottom:5px">Binary Search Trees Implementation</h2>
+          <div style="font-size:12px;color:var(--text2)">Data Structures · Dr. Rohan Verma</div>
+        </div>
+        ${sbadge('pending')}
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;padding-top:13px;border-top:1px solid var(--border);font-size:13px">
+        <span><span style="color:var(--text2)">Due:</span> <strong>Apr 5, 2026</strong></span>
+        <span><span style="color:var(--text2)">Points:</span> <strong>100</strong></span>
+        <span><span style="color:var(--text2)">Attempts left:</span> <strong>2</strong></span>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:700;margin-bottom:11px;font-size:14px">📄 Description</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.75">Implement a complete Binary Search Tree in Python with: insertion, deletion, search, all traversals (in/pre/post-order, level-order), and height calculation. Include a comprehensive test suite and proper documentation.</p>
+    </div>
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:700;margin-bottom:14px;font-size:14px">📎 Submit Your Work</div>
+      <div class="drop-zone" id="dz" onclick="document.getElementById('ffi').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+        <div class="drop-icon">☁️</div>
+        <div class="drop-txt">Drop files here or click to browse</div>
+        <div class="drop-sub">ZIP, PDF, PY · Max 50 MB</div>
+        <input type="file" id="ffi" style="display:none" onchange="doUpload()">
+      </div>
+      <div id="upProg" style="display:none;margin-top:14px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:7px">
+          <span>📁 bst_implementation.zip</span><span id="upPct" style="color:var(--accent)">0%</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="upBar" style="width:0%;transition:width .3s"></div></div>
+      </div>
+      <div style="margin-top:18px"><label class="input-label">Submission Notes (optional)</label><textarea class="input" rows="3" placeholder="Any notes for your teacher…"></textarea></div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="btn btn-primary" onclick="doUpload()">Submit Assignment</button>
+        <button class="btn btn-outline">Save Draft</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:12px;font-size:14px">📋 Submission History</div>
+      <div style="text-align:center;padding:24px;color:var(--text2)">
+        <div style="font-size:32px;margin-bottom:8px;opacity:.4">📭</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text)">No previous submissions</div>
+        <div style="font-size:12px;margin-top:4px">Your history will appear here once you submit.</div>
+      </div>
+    </div>
+  </div>`, 'Submit Assignment', 'Binary Search Trees Implementation');
+}
+function handleDrop(e){e.preventDefault();document.getElementById('dz')?.classList.remove('drag');doUpload();}
+window.handleDrop=handleDrop;
+function doUpload(){
+  const p=document.getElementById('upProg');const b=document.getElementById('upBar');const pct=document.getElementById('upPct');
+  if(!p)return; p.style.display='block'; let v=0;
+  const iv=setInterval(()=>{v+=Math.random()*14;if(v>=100){v=100;clearInterval(iv);toast('Assignment submitted! 🎉','ok');}
+  if(b)b.style.width=v+'%'; if(pct)pct.textContent=Math.round(v)+'%';},160);
+}
+window.doUpload=doUpload;
+
+/* ─── TEACHER DASHBOARD ──────────────────────────── */
+function renderTeacherHome(){
+  const cards=[
+    {ic:'📝',lbl:'Active Assignments',val:'6',color:'var(--accent)',bg:'var(--accent-lt)'},
+    {ic:'📥',lbl:'Ungraded Submissions',val:'14',color:'var(--rose)',bg:'var(--rose-lt)'},
+    {ic:'📋',lbl:'Pending Intern Logs',val:'8',color:'var(--amber)',bg:'var(--amber-lt)'},
+    {ic:'👥',lbl:'Total Students',val:'127',color:'var(--teal)',bg:'var(--teal-lt)'},
+  ];
+  return wrap(`
+  <div class="sec" style="animation-delay:.04s">
+    <div class="sec-head">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700">Hello, Dr. Verma 👋</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px">You have 14 submissions awaiting grades.</div>
+      </div>
+      <button class="btn btn-primary" onclick="go('create-asn')">+ Create Assignment</button>
+    </div>
+    <div class="stats-grid">
+      ${cards.map((c,i)=>`
+        <div class="stat-card" style="animation-delay:${i*.07}s;border-top:2px solid ${c.color}">
+          <div class="stat-icon" style="color:${c.color}">${c.ic}</div>
+          <div class="stat-val" style="color:${c.color}">${c.val}</div>
+          <div class="stat-lbl">${c.lbl}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="sec" style="animation-delay:.13s">
+      <div class="sec-head"><div class="sec-title">📊 Submission Progress</div><button class="btn btn-ghost btn-sm" onclick="go('teacher-asn')">Manage →</button></div>
+      <div class="card">
+        ${ASSIGNMENTS.map(a=>`
+          <div class="prog-row">
+            <div class="prog-meta"><strong>${a.title.substring(0,28)}…</strong><span>${a.sub}/${a.total}</span></div>
+            <div class="prog-bar"><div class="prog-fill ${a.status==='late'?'ro':'tl'}" style="width:${Math.round(a.sub/a.total*100)}%"></div></div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="sec" style="animation-delay:.18s">
+      <div class="sec-head"><div class="sec-title">⚡ Grading Queue</div><button class="btn btn-ghost btn-sm" onclick="go('grading')">Grade all →</button></div>
+      <div class="card">
+        ${STUDENTS.filter(s=>s.status==='submitted').map((s,i)=>`
+          <div style="display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--border)">
+            ${avatarEl(s.name,USERS.teacher.color,34)}
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600">${s.name}</div>
+              <div style="font-size:11px;color:var(--text2)">${s.roll} · Binary Search Trees</div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="go('grading')">Grade</button>
+          </div>`).join('')}
+        <div style="padding-top:10px;text-align:center;font-size:12px;color:var(--text2)">3 submissions pending</div>
+      </div>
+    </div>
+  </div>
+  <button class="fab" onclick="go('create-asn')">+</button>
+  `, 'Teacher Dashboard', 'Computer Science Department');
+}
+
+/* ─── TEACHER ASSIGNMENTS ────────────────────────── */
+function renderTeacherAsn(){
+  return wrap(`
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">Assignments</div>
+      <button class="btn btn-primary" onclick="go('create-asn')">+ New Assignment</button>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Title</th><th>Course</th><th>Due</th><th>Submissions</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${ASSIGNMENTS.map(a=>`
+            <tr>
+              <td class="td-main">${a.title}</td>
+              <td><span class="badge b-indigo">${a.course}</span></td>
+              <td style="font-size:12px;font-weight:600">${a.due}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:7px">
+                  <div style="flex:1;height:4px;background:var(--bg3);border-radius:4px;min-width:55px">
+                    <div style="height:100%;border-radius:4px;background:var(--teal);width:${Math.round(a.sub/a.total*100)}%"></div>
+                  </div>
+                  <span style="font-size:12px;white-space:nowrap">${a.sub}/${a.total}</span>
+                </div>
+              </td>
+              <td>${sbadge(a.status==='graded'?'graded':a.sub>0?'submitted':'pending')}</td>
+              <td>
+                <div style="display:flex;gap:6px">
+                  <button class="btn btn-outline btn-sm" onclick="go('grading')">Review</button>
+                  <button class="btn btn-ghost btn-sm" onclick="toast('Edit mode','info')">✏️</button>
+                  <button class="btn btn-danger btn-sm" onclick="toast('Deleted','err')">🗑</button>
+                </div>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="pages">${[1,2,3,'…',8].map((n,i)=>`<div class="pg ${i===0?'on':''}">${n}</div>`).join('')}</div>
+  </div>
+  <button class="fab" onclick="go('create-asn')">+</button>
+  `, 'Assignments', 'Manage all assignments');
+}
+
+/* ─── CREATE ASSIGNMENT ──────────────────────────── */
+function renderCreateAsn(){
+  return wrap(`
+  <div style="max-width:780px;margin:0 auto">
+    <button class="btn btn-ghost btn-sm" onclick="go('teacher-asn')" style="margin-bottom:16px">← Back</button>
+    <div class="card" style="margin-bottom:18px">
+      <div class="label" style="margin-bottom:16px">📋 Basic Details</div>
+      <div class="input-wrap"><label class="input-label">Assignment Title</label><input class="input" placeholder="e.g., Binary Search Trees Implementation"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="input-wrap"><label class="input-label">Course</label><select class="input"><option>Data Structures</option><option>Web Development</option><option>Machine Learning</option></select></div>
+        <div class="input-wrap"><label class="input-label">Total Points</label><input class="input" type="number" placeholder="100"/></div>
+        <div class="input-wrap"><label class="input-label">Due Date</label><input class="input" type="date"/></div>
+        <div class="input-wrap"><label class="input-label">Due Time</label><input class="input" type="time"/></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:18px">
+      <div class="label" style="margin-bottom:14px">📄 Description</div>
+      <div style="border:1.5px solid var(--border);border-radius:var(--r-sm);overflow:hidden">
+        <div style="background:var(--bg2);padding:8px 10px;display:flex;gap:6px;border-bottom:1px solid var(--border)">
+          ${['B','I','U','H1','H2','—','🔗'].map(b=>`<button class="btn btn-ghost btn-sm btn-icon" style="padding:4px 9px;font-size:12px">${b}</button>`).join('')}
+        </div>
+        <textarea class="input" style="border:none;border-radius:0;min-height:140px;resize:none;border-top:none" placeholder="Write the full assignment instructions here…"></textarea>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:18px">
+      <div class="label" style="margin-bottom:14px">⚙️ Settings</div>
+      ${[
+        {l:'Allow Late Submissions',s:'Students can submit after the deadline (penalty applied)'},
+        {l:'Allow Resubmission',s:'Students may resubmit after initial submission'},
+        {l:'Anonymous Grading',s:'Student names hidden during grading session'},
+      ].map((o,i)=>`
+        <div class="tgl-wrap">
+          <div class="tgl ${i===0?'on':''}" onclick="this.classList.toggle('on')"></div>
+          <div class="tgl-info"><div class="tgl-lbl">${o.l}</div><div class="tgl-sub">${o.s}</div></div>
+        </div>`).join('')}
+    </div>
+    <div class="card" style="margin-bottom:22px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="label">📊 Rubric Builder</div>
+        <button class="btn btn-outline btn-sm" onclick="toast('Criterion added','ok')">+ Add</button>
+      </div>
+      ${[{l:'Code Quality & Style',m:30},{l:'Correctness & Functionality',m:40},{l:'Documentation',m:20},{l:'Test Coverage',m:10}].map(r=>`
+        <div class="rubric-row">
+          <div class="r-label">${r.l}</div>
+          <div class="r-max">${r.m} pts</div>
+          <input type="number" class="r-input" value="${r.m}"/>
+        </div>`).join('')}
+      <div style="text-align:right;margin-top:10px;font-size:13px;color:var(--text2)">Total: <strong style="color:var(--text)">100 pts</strong></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-outline">Save Draft</button>
+      <button class="btn btn-primary btn-lg" onclick="toast('Assignment published! 🎉','ok');go('teacher-asn')">Publish Assignment</button>
+    </div>
+  </div>`, 'Create Assignment', 'Design a new assignment');
+}
+
+/* ─── GRADING ────────────────────────────────────── */
+function renderGrading(){
+  const i=S.gradingIdx||0; const s=STUDENTS[i];
+  return wrap(`
+  <div style="display:grid;grid-template-columns:240px 1fr;gap:20px">
+    <div class="card" style="height:fit-content">
+      <div class="label" style="margin-bottom:11px">Queue (${STUDENTS.length})</div>
+      ${STUDENTS.map((st,idx)=>`
+        <div style="display:flex;align-items:center;gap:9px;padding:9px;border-radius:8px;cursor:pointer;transition:all .18s;margin-bottom:3px;background:${idx===i?'var(--accent-lt)':'transparent'};border:1px solid ${idx===i?'rgba(45,58,140,.25)':'transparent'}" onclick="setGrade(${idx})">
+          ${avatarEl(st.name,USERS.teacher.color,30)}
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:600">${st.name}</div>
+            <div style="font-size:11px;color:var(--text2)">${st.roll}</div>
+          </div>
+          ${st.grade?`<span style="font-size:13px;font-weight:700;color:var(--teal)">${st.grade}</span>`:sbadge(st.status)}
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:15px">
+          ${avatarEl(s.name,USERS.teacher.color,48)}
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700">${s.name}</div>
+            <div style="font-size:12px;color:var(--text2)">${s.roll} · Submitted 2 hours ago</div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm" onclick="setGrade(${Math.max(0,i-1)})">← Prev</button>
+            <button class="btn btn-outline btn-sm" onclick="setGrade(${Math.min(STUDENTS.length-1,i+1)})">Next →</button>
+          </div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);height:200px;display:flex;align-items:center;justify-content:center">
+          <div style="text-align:center;color:var(--text2)">
+            <div style="font-size:40px;margin-bottom:10px">📄</div>
+            <div style="font-size:14px;font-weight:600">bst_implementation.zip</div>
+            <div style="font-size:12px;margin-top:5px">Submitted Apr 2 · 124 KB</div>
+            <button class="btn btn-outline btn-sm" style="margin-top:11px" onclick="toast('Downloading…','info')">⬇ Download</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:14px;font-size:14px">📊 Rubric</div>
+        ${[{l:'Code Quality & Style',m:30,v:24},{l:'Correctness & Functionality',m:40,v:36},{l:'Documentation',m:20,v:16},{l:'Test Coverage',m:10,v:8}].map(r=>`
+          <div class="rubric-row">
+            <div><div class="r-label">${r.l}</div><div class="r-max">Max ${r.m}</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><input type="number" class="r-input" value="${r.v}" min="0" max="${r.m}"/><span style="font-size:12px;color:var(--text2)">/ ${r.m}</span></div>
+          </div>`).join('')}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+          <span style="font-size:15px;font-weight:700">Total Score</span>
+          <div style="display:flex;align-items:baseline;gap:6px">
+            <span class="grade-big" style="color:var(--teal)">84</span>
+            <span style="font-size:16px;color:var(--text2)">/ 100</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:11px;font-size:14px">💬 Feedback</div>
+        <textarea class="input" rows="4">Good implementation of BST operations. Insert and delete work correctly. Consider optimising height calculation. Test coverage is adequate but could be broader for edge cases.</textarea>
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <button class="btn btn-primary" onclick="toast('Grade published! ✅','ok')">Publish Grade</button>
+          <button class="btn btn-outline" onclick="toast('Draft saved','info')">Save Draft</button>
+        </div>
+      </div>
+    </div>
+  </div>`, 'Grading', 'Binary Search Trees Implementation');
+}
+
+/* ─── STUDENT INTERNSHIP ─────────────────────────── */
+function renderStudentIntern(){
+  const s=S.step||0;
+  const steps=['Details','Tasks','Learnings','Skills'];
+  return wrap(`
+  <div class="g2" style="align-items:start">
+    <div class="sec">
+      <div class="sec-head"><div class="sec-title">📝 Submit Weekly Log</div></div>
+      <div class="card">
+        <div class="steps">
+          ${steps.map((lb,idx)=>`
+            ${idx>0?`<div class="step-ln ${idx<=s?'done':''}"></div>`:''}
+            <div class="step">
+              <div class="step-n ${idx<s?'done':idx===s?'active':'pend'}">${idx<s?'✓':(idx+1)}</div>
+              <span class="step-lbl ${idx===s?'active':''}">${lb}</span>
+            </div>`).join('')}
+        </div>
+        ${s===0?`
+          <div class="input-wrap"><label class="input-label">Week Number</label><input class="input" value="Week 13"/></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="input-wrap"><label class="input-label">Start Date</label><input class="input" type="date"/></div>
+            <div class="input-wrap"><label class="input-label">End Date</label><input class="input" type="date"/></div>
+          </div>
+          <div class="input-wrap"><label class="input-label">Reporting Supervisor</label><input class="input" value="Mr. Rahul Sharma, Senior Dev"/></div>
+        `:s===1?`
+          <div class="input-wrap"><label class="input-label">Tasks Completed This Week</label><textarea class="input" rows="5">Implemented OAuth2 authentication flow, participated in sprint planning, reviewed 3 pull requests, and fixed 2 bugs in the registration module.</textarea></div>
+        `:s===2?`
+          <div class="input-wrap"><label class="input-label">Key Learnings</label><textarea class="input" rows="4">Deepened knowledge of OAuth2 PKCE flow. Learned about constructive code review techniques and async error propagation patterns.</textarea></div>
+          <div class="input-wrap"><label class="input-label">Challenges Faced</label><textarea class="input" rows="3" placeholder="Describe any blockers or difficulties…"></textarea></div>
+        `:`
+          <div class="input-wrap">
+            <label class="input-label">Skills Used / Gained</label>
+            <div class="tags" style="margin-top:8px">
+              ${['Node.js','OAuth2','JWT','Code Review','Agile','TypeScript','PostgreSQL','Docker'].map(t=>`
+                <div class="tag ${['Node.js','OAuth2','Code Review','TypeScript'].includes(t)?'on':''}" onclick="this.classList.toggle('on')">${t}</div>`).join('')}
+            </div>
+          </div>
+          <div class="input-wrap">
+            <label class="input-label">Week Rating</label>
+            <div style="display:flex;gap:7px;margin-top:7px">
+              ${[1,2,3,4,5].map(n=>`<div style="width:38px;height:38px;border-radius:8px;background:${n<=4?'var(--accent)':'var(--bg3)'};color:${n<=4?'#fff':'var(--text3)'};display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;font-size:15px;border:1.5px solid ${n<=4?'var(--accent)':'var(--border)'};transition:all .18s">${n}</div>`).join('')}
+            </div>
+          </div>
+        `}
+        <div style="display:flex;gap:10px;margin-top:6px">
+          ${s>0?`<button class="btn btn-outline" onclick="setStep(${s-1})">← Back</button>`:''}
+          <button class="btn btn-primary" onclick="${s<3?`setStep(${s+1})`:` toast('Weekly log submitted! 🎉','ok');setStep(0)`}">${s<3?'Continue →':'Submit Log'}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><div class="sec-title">📅 Log History</div></div>
+      <div class="tl">
+        ${LOGS.map(l=>`
+          <div class="tl-item">
+            <div class="tl-date">${l.week} · ${l.date}</div>
+            <div class="tl-card">
+              <div style="font-size:13px;margin-bottom:7px"><strong>Tasks:</strong> <span style="color:var(--text2)">${l.tasks}</span></div>
+              <div style="font-size:13px;margin-bottom:10px"><strong>Learned:</strong> <span style="color:var(--text2)">${l.learn}</span></div>
+              <div class="tags">${l.skills.map(sk=>`<div class="tag on">${sk}</div>`).join('')}</div>
+              <div style="margin-top:10px;display:flex;align-items:center;gap:7px">
+                <span class="badge b-teal b-dot">Reviewed</span>
+                <span style="font-size:11px;color:var(--text2)">Dr. Rohan Verma</span>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`, 'Internship Logs', 'TechNova Solutions · Week 13');
+}
+
+/* ─── TEACHER INTERNSHIP ─────────────────────────── */
+function renderTeacherIntern(){
+  return wrap(`
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">Internship Log Reviews</div>
+      <div class="filter-row" style="margin:0">
+        <div class="f-chip on">All (24)</div>
+        <div class="f-chip">Pending (8)</div>
+        <div class="f-chip">Reviewed (16)</div>
+      </div>
+    </div>
+    ${STUDENTS.map((s,i)=>`
+      <div class="card" style="margin-bottom:14px;animation-delay:${i*.05}s">
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:15px;align-items:start">
+          ${avatarEl(s.name,USERS.teacher.color,42)}
+          <div>
+            <div style="font-weight:700;font-size:15px;margin-bottom:2px">${s.name}</div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:10px">${s.roll} · Week ${12-i} · Submitted ${i+1}d ago</div>
+            <div style="font-size:13px;color:var(--text2);line-height:1.65">Implemented REST endpoints for the auth module, participated in code review sessions, and worked on query optimisation…</div>
+            <div class="tags" style="margin-top:9px">${['Node.js','SQL','REST'].map(t=>`<div class="tag on">${t}</div>`).join('')}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="margin-bottom:10px">${i%3===0?sbadge('pending'):sbadge('graded')}</div>
+            <button class="btn btn-primary btn-sm" onclick="showModal('reviewLog')">Review</button>
+          </div>
+        </div>
+      </div>`).join('')}
+  </div>
+  ${S.modal==='reviewLog'?`
+  <div class="overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="modal-h"><div class="modal-title">Review Internship Log</div><div class="modal-x" onclick="closeModal()">✕</div></div>
+      <div class="modal-b">
+        <div style="background:var(--bg2);border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--text2);line-height:1.65"><strong style="color:var(--text)">Tasks this week:</strong> Implemented OAuth2 flow, attended sprint planning, fixed 3 auth bugs, reviewed 2 pull requests.</div>
+        <div class="input-wrap"><label class="input-label">Your Feedback</label><textarea class="input" rows="4">Good progress on the OAuth2 implementation. The PKCE flow is correctly handled. Continue focusing on code documentation and test coverage.</textarea></div>
+        <div class="input-wrap">
+          <label class="input-label">Rating</label>
+          <div style="display:flex;gap:7px;margin-top:7px">
+            ${[1,2,3,4,5].map(n=>`<div style="width:36px;height:36px;border-radius:7px;background:${n<=4?'var(--accent)':'var(--bg3)'};color:${n<=4?'#fff':'var(--text3)'};display:flex;align-items:center;justify-content:center;font-weight:700;border:1.5px solid ${n<=4?'var(--accent)':'var(--border)'};cursor:pointer">${n}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="modal-f">
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="toast('Log reviewed and approved ✅','ok');closeModal()">Approve & Submit</button>
+      </div>
+    </div>
+  </div>`:''}
+  `, 'Internship Logs', 'Review student weekly submissions');
+}
+
+/* ─── ADMIN DASHBOARD ────────────────────────────── */
+function renderAdminHome(){
+  const months=['Jan','Feb','Mar','Apr','May','Jun'];
+  const vals=[42,65,55,80,72,91];
+  const mx=Math.max(...vals);
+  return wrap(`
+  <div class="sec" style="animation-delay:.04s">
+    <div class="sec-head">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700">System Overview 🛠️</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px">Platform health, analytics and activity.</div>
+      </div>
+    </div>
+    <div class="stats-grid">
+      ${[
+        {ic:'👥',l:'Students',v:'342',chg:'+12 this month',col:'var(--accent)'},
+        {ic:'👩‍🏫',l:'Teachers',v:'28',chg:'4 departments',col:'var(--teal)'},
+        {ic:'📝',l:'Submissions',v:'1,847',chg:'+89 this week',col:'var(--amber)'},
+        {ic:'💼',l:'Intern Logs',v:'96',chg:'8 pending',col:'var(--rose)'},
+      ].map((c,i)=>`
+        <div class="stat-card" style="animation-delay:${i*.07}s">
+          <div class="stat-icon" style="color:${c.col}">${c.ic}</div>
+          <div class="stat-val" style="color:${c.col}">${c.v}</div>
+          <div class="stat-lbl">${c.l}</div>
+          <div class="stat-chg chg-up">↑ ${c.chg}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="sec" style="animation-delay:.13s">
+      <div class="chart-box">
+        <div class="chart-lbl"><span>📈 Submissions / Month</span><span style="font-size:11px;color:var(--text2)">2026</span></div>
+        <div class="bar-area">
+          ${months.map((m,i)=>`
+            <div class="bar-col">
+              <div class="bar" data-v="${vals[i]}" style="height:${Math.round(vals[i]/mx*100)}%;background:${i===5?'var(--accent)':'var(--bg3)'}"></div>
+              <span class="bar-lbl">${m}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="sec" style="animation-delay:.18s">
+      <div class="chart-box">
+        <div class="chart-lbl"><span>🍩 User Distribution</span></div>
+        <div style="display:flex;align-items:center;gap:22px;justify-content:center;height:160px">
+          <svg width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="46" fill="none" stroke="var(--accent)" stroke-width="26" stroke-dasharray="184 106" stroke-dashoffset="0" opacity=".85"/>
+            <circle cx="65" cy="65" r="46" fill="none" stroke="var(--teal)" stroke-width="26" stroke-dasharray="46 244" stroke-dashoffset="-184" opacity=".85"/>
+            <circle cx="65" cy="65" r="46" fill="none" stroke="var(--amber)" stroke-width="26" stroke-dasharray="60 230" stroke-dashoffset="-230" opacity=".85"/>
+            <circle cx="65" cy="65" r="26" fill="var(--surface)"/>
+            <text x="65" y="68" text-anchor="middle" fill="var(--text2)" font-size="10" font-weight="700" font-family="Outfit">USERS</text>
+          </svg>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            ${[['var(--accent)','Students','342'],['var(--teal)','Teachers','28'],['var(--amber)','Admins','4']].map(([c,l,v])=>`
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px">
+                <div style="width:9px;height:9px;border-radius:50%;background:${c}"></div>
+                <span style="color:var(--text2)">${l}</span>
+                <strong style="margin-left:auto;padding-left:10px">${v}</strong>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="sec" style="animation-delay:.23s">
+      <div class="sec-head"><div class="sec-title">🕐 Recent Activity</div></div>
+      <div class="card">
+        ${[
+          ['👤','New student registered: <strong>Priya Sharma</strong>','5 min ago','var(--accent-lt)'],
+          ['📝','Assignment published: <strong>REST API Design</strong>','1 hour ago','var(--teal-lt)'],
+          ['✅','14 submissions graded by <strong>Dr. Rohan Verma</strong>','2 hours ago','var(--teal-lt)'],
+          ['💼','Internship log reviewed for <strong>Aanya Mehta</strong>','3 hours ago','var(--amber-lt)'],
+          ['🔒','System backup completed successfully','6 hours ago','var(--bg2)'],
+        ].map(([ic,txt,t,bg])=>`
+          <div style="display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="width:30px;height:30px;border-radius:7px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${ic}</div>
+            <div><div style="font-size:13px;line-height:1.5;color:var(--text2)">${txt}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${t}</div></div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="sec" style="animation-delay:.28s">
+      <div class="sec-head"><div class="sec-title">💚 System Health</div></div>
+      <div class="card">
+        ${[
+          {l:'API Server',v:'99.9% uptime',c:'h-green'},
+          {l:'Database',v:'4 ms latency',c:'h-green'},
+          {l:'File Storage',v:'72% capacity',c:'h-orange'},
+          {l:'Email Service',v:'Operational',c:'h-green'},
+          {l:'Background Jobs',v:'3 queued',c:'h-green'},
+          {l:'CDN',v:'All regions up',c:'h-green'},
+        ].map(h=>`
+          <div class="health-row">
+            <div class="h-dot ${h.c}"></div>
+            <div class="h-lbl">${h.l}</div>
+            <div class="h-val">${h.v}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>
+  `, 'Admin Dashboard', 'SAIMS Platform Overview');
+}
+
+/* ─── ADMIN USERS ────────────────────────────────── */
+function renderAdminUsers(){
+  const rc={Student:'b-indigo',Teacher:'b-teal',Admin:'b-amber'};
+  return wrap(`
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">User Management <span style="font-size:12px;color:var(--text2);font-family:Outfit;font-weight:400">${USERS2.length} users</span></div>
+      <button class="btn btn-primary" onclick="showModal('addUser')">+ Add User</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+      <div class="search-wrap" style="flex:1;min-width:200px"><span style="font-size:14px;color:var(--text3)">🔍</span><input placeholder="Search name, email…"/></div>
+      <select class="input" style="width:auto"><option>All Roles</option><option>Student</option><option>Teacher</option><option>Admin</option></select>
+      <select class="input" style="width:auto"><option>All Status</option><option>Active</option><option>Inactive</option></select>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${USERS2.map(u=>`
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:9px">
+                  ${avatarEl(u.name,USERS.admin.color,32)}
+                  <span class="td-main">${u.name}</span>
+                </div>
+              </td>
+              <td style="color:var(--text2);font-size:12.5px">${u.email}</td>
+              <td><span class="badge ${rc[u.role]||'b-gray'}">${u.role}</span></td>
+              <td><span class="badge ${u.status==='active'?'b-teal':'b-gray'} b-dot">${u.status}</span></td>
+              <td style="font-size:12px;color:var(--text2)">${u.joined}</td>
+              <td>
+                <div style="display:flex;gap:6px">
+                  <button class="btn btn-outline btn-sm" onclick="toast('Editing ${u.name}','info')">✏️</button>
+                  <button class="btn btn-danger btn-sm" onclick="toast('User removed','err')">🗑</button>
+                </div>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="pages">${[1,2,3,'…',18].map((n,i)=>`<div class="pg ${i===0?'on':''}">${n}</div>`).join('')}</div>
+  </div>
+  ${S.modal==='addUser'?`
+  <div class="overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="modal-h"><div class="modal-title">Add New User</div><div class="modal-x" onclick="closeModal()">✕</div></div>
+      <div class="modal-b">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div><label class="input-label">First Name</label><input class="input" placeholder="Aanya"/></div>
+          <div><label class="input-label">Last Name</label><input class="input" placeholder="Mehta"/></div>
+        </div>
+        <div class="input-wrap"><label class="input-label">Email</label><input class="input" type="email" placeholder="user@saims.edu"/></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div><label class="input-label">Role</label><select class="input"><option>Student</option><option>Teacher</option><option>Admin</option></select></div>
+          <div><label class="input-label">Department</label><select class="input"><option>Computer Science</option><option>Engineering</option></select></div>
+        </div>
+        <div class="input-wrap"><label class="input-label">Temporary Password</label><input class="input" type="password" placeholder="User will reset on first login"/></div>
+      </div>
+      <div class="modal-f">
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="toast('User created! 🎉','ok');closeModal()">Create User</button>
+      </div>
+    </div>
+  </div>`:''}
+  `, 'User Management', `${USERS2.length} total users`);
+}
+
+/* ─── REPORTS ────────────────────────────────────── */
+function renderReports(){
+  return wrap(`
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">Reports & Analytics</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="toast('Exporting CSV…','info')">📊 CSV</button>
+        <button class="btn btn-primary btn-sm" onclick="toast('Generating PDF…','info')">📄 PDF</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:20px">
+      <div class="label" style="margin-bottom:13px">Filters</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        ${[['Date Range','Last 30 days,Last 3 months,This semester'],['Course','All Courses,Data Structures,Web Development,ML'],['Type','Submission Rates,Grade Distribution,Intern Progress']].map(([l,opts])=>`
+          <div style="min-width:160px"><label class="input-label">${l}</label><select class="input">${opts.split(',').map(o=>`<option>${o}</option>`).join('')}</select></div>`).join('')}
+        <div style="display:flex;align-items:flex-end"><button class="btn btn-primary" onclick="toast('Report generated','ok')">Generate</button></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="chart-box">
+        <div class="chart-lbl"><span>📊 Grade Distribution</span></div>
+        <div class="bar-area" style="height:140px">
+          ${[['A (90+)',28,'var(--teal)'],['B (80-89)',45,'var(--accent)'],['C (70-79)',35,'var(--amber)'],['D (60-69)',18,'var(--rose)'],['F (<60)',8,'#ccc']].map(([r,v,c])=>`
+            <div class="bar-col">
+              <div class="bar" data-v="${v}" style="height:${Math.round(v/45*100)}%;background:${c}"></div>
+              <span class="bar-lbl" style="font-size:9px;text-align:center">${r}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-lbl"><span>📈 Daily Submissions (this week)</span></div>
+        <div class="bar-area" style="height:140px">
+          ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d,i)=>{const v=[12,28,18,42,35,8,5][i];return `
+            <div class="bar-col">
+              <div class="bar" data-v="${v}" style="height:${Math.round(v/42*100)}%;background:${i===3?'var(--amber)':'var(--bg3)'}"></div>
+              <span class="bar-lbl">${d}</span>
+            </div>`;}).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="sec" style="margin-top:20px">
+      <div class="sec-head"><div class="sec-title">Course Performance Summary</div></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Course</th><th>Assignments</th><th>Avg Submissions</th><th>Avg Grade</th><th>Completion</th></tr></thead>
+          <tbody>
+            ${[
+              {c:'Data Structures',a:4,s:'28/32',g:'82.4',r:87.5},
+              {c:'Web Development',a:5,s:'30/32',g:'79.8',r:93.7},
+              {c:'Machine Learning',a:3,s:'25/32',g:'85.1',r:78.1},
+              {c:'Database Systems',a:4,s:'22/32',g:'77.3',r:68.7},
+            ].map(r=>`
+              <tr>
+                <td class="td-main">${r.c}</td>
+                <td>${r.a}</td>
+                <td>${r.s}</td>
+                <td><span style="font-weight:700;color:${parseFloat(r.g)>=80?'var(--teal)':'var(--amber)'}">${r.g}</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:7px">
+                    <div style="flex:1;height:4px;background:var(--bg3);border-radius:4px;min-width:55px">
+                      <div style="height:100%;background:var(--teal);border-radius:4px;width:${r.r}%"></div>
+                    </div>
+                    <span style="font-size:12px">${r.r}%</span>
+                  </div>
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  `, 'Reports', 'Analytics & export');
+}
+
+/* ─── ROUTER ─────────────────────────────────────── */
+function render(){
+  const app=document.getElementById('app');
+  if(!app)return;
+  const map={
+    login:renderLogin, register:renderRegister, forgot:renderForgot,
+    'student-home':renderStudentHome, 'student-asn':renderStudentAsn,
+    submission:renderSubmission, 'student-intern':renderStudentIntern,
+    'teacher-home':renderTeacherHome, 'teacher-asn':renderTeacherAsn,
+    'create-asn':renderCreateAsn, grading:renderGrading,
+    'teacher-intern':renderTeacherIntern,
+    'admin-home':renderAdminHome, 'admin-users':renderAdminUsers,
+    reports:renderReports,
+  };
+  app.innerHTML=(map[S.page]||renderLogin)();
+}
+
+document.addEventListener('click',e=>{
+  if(S.notifOpen||S.profileOpen){
+    if(!e.target.closest('.notif-panel')&&!e.target.closest('.icon-btn')&&!e.target.closest('.dd-menu')&&!e.target.closest('.avatar')){
+      S.notifOpen=false; S.profileOpen=false; render();
+    }
+  }
+});
+
+render();
+</script>
+</body>
+</html>
