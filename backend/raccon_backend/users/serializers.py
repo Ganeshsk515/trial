@@ -2,10 +2,11 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import User, AuditLog
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'role', 'is_email_verified']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'role', 'is_email_verified', 'is_active']
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -17,6 +18,37 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+
+class AdminUserCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'role', 'is_active']
+
+    def validate_role(self, value):
+        if value not in {'teacher', 'admin'}:
+            raise serializers.ValidationError('Only Teacher or Admin accounts can be created here.')
+        return value
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+
+class AdminUserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'role', 'is_active']
+
+    def validate_role(self, value):
+        if value not in {'teacher', 'admin', 'student'}:
+            raise serializers.ValidationError('Invalid role.')
+        return value
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()

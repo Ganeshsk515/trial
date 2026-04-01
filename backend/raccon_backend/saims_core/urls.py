@@ -13,18 +13,18 @@ def home(request):
           <li><a href="/auth/login/">/auth/login/</a></li>
           <li><a href="/assignments/">/assignments/</a></li>
           <li><a href="/internships/">/internships/</a></li>
+          <li><a href="/submissions/">/submissions/</a></li>
+          <li><a href="/admin/users/">/admin/users/</a></li>
           <li><a href="/reports/assignments/">/reports/assignments/</a></li>
-          <li><a href="/auth/audit-logs/">/auth/audit-logs/</a></li>
+          <li><a href="/audit-logs/">/audit-logs/</a></li>
         </ul>
         """,
     )
 
 urlpatterns = [
     path('', home, name='home'),
+    path('', include('users.urls')),
+    path('', include('academics.urls')),
+    path('', include('internships.urls')),
     path('admin/', admin.site.urls),
-    path('auth/', include('users.urls')),
-    path('assignments/', include('academics.urls')),
-    path('internships/', include('internships.urls')),
-    path('api/admin/', include('users.urls')),
-    path('reports/', include('academics.urls')),
 ]
